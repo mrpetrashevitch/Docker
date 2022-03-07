@@ -13,11 +13,13 @@ app.get('/', function (req, res) {
     db_context.fill_tables()
     console.log(`bd inited`)
   }
-  console.log(`app.get 2`)
   res.sendFile(root__dirname + '/static/index.html')
 })
 
 app.use(express.static(root__dirname + '/static/'))
+
+app.use(express.json());
+app.use(express.urlencoded());
 
 app.get('/authors', function (req, res) {
   let con = db_context.get_con()
@@ -67,6 +69,20 @@ app.get('/checkouts', function (req, res) {
   })
 })
 
+app.post('/', function (req, res) {
+  let con = db_context.get_con()
+  con.connect(function (err) {
+    if (err) throw err
+    const sql = req.body.q
+    con.query(sql, function (err, result, fields) {
+      if (err) {
+        res.status(400).send(err.message)
+      }else{
+        res.send(JSON.stringify(result))
+      }
+    })
+  })
+})
 
 app.listen(PORT)
 console.log(`listening on port ${PORT}`)

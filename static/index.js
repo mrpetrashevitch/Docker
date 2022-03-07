@@ -3,6 +3,9 @@ const books = document.getElementById('books')
 const customers = document.getElementById('customers')
 const checkouts = document.getElementById('checkouts')
 const container = document.getElementById('container')
+const edit = document.getElementById('textedit')
+const send = document.getElementById('button_send')
+
 
 authors.addEventListener('click', () => {
   getAuthors()
@@ -20,6 +23,31 @@ checkouts.addEventListener('click', () => {
   getCheckouts()
 })
 
+send.addEventListener('click', (e) => {
+  e.preventDefault()
+  let str = edit.value.trim()
+  if(!str) return
+  post(str)
+})
+
+async function post(str) {
+  const responce = await fetch('/', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({q:str})
+  })
+  if(responce.ok){
+  let data = await responce.json()
+  view_data(data)
+  }else{
+  let message = await responce.text()
+  alert(message)
+  }
+}
+
 async function getData(type) {
   const responce = await fetch(`/${type}`)
   return await responce.json()
@@ -27,36 +55,38 @@ async function getData(type) {
 
 async function getAuthors() {
   const data = await getData('authors')
-  let str = ""
-  data.forEach(element => {
-    str += "<li>" + element.id + ". " + element.s_name + "</li>"
-  });
-  container.innerHTML = str
+  view_data(data)
 }
 
 async function getBooks() {
   const data = await getData('books')
-  let str = ""
-  data.forEach(element => {
-    str += "<li>" + element.id + ". " + element.title + " " + element.prod_year+ " " + element.price+ " "+ element.category+ " "+ element.quantity+ " "+ element.b_format+ " "+ element.filesize + "</li>"
-  });
-  container.innerHTML = str
+  view_data(data)
 }
 
 async function getCustomers() {
   const data = await getData('customers')
-  let str = ""
-  data.forEach(element => {
-    str += "<li>" + element.id + ". " + element.c_name + " " + element.c_email + "</li>"
-  });
-  container.innerHTML = str
+  view_data(data)
 }
 
 async function getCheckouts() {
   const data = await getData('checkouts')
-  let str = ""
+  view_data(data)
+}
+
+function view_data(data){
+  let first = data[0]
+  let str_of_title = ""
+  let style_of_grid = ""
+  for(let key in first){
+    str_of_title += `<li class='title'>` + key + "</li>"
+    style_of_grid+="max-content "
+  }
+  let str_of_data=""
   data.forEach(element => {
-    str += "<li>" + element.id + ". " + element.c_id + " " + element.ch_type+ " " + element.ch_date + "</li>"
+    for(let key in element){
+      str_of_data += "<li>" + element[key] + "</li>"
+    }
   });
-  container.innerHTML = str
+  container.style.gridTemplateColumns = style_of_grid ? style_of_grid:'max-content'
+  container.innerHTML = str_of_title + str_of_data
 }

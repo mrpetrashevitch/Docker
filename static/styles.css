@@ -1,0 +1,30 @@
+#container {
+    display: grid;
+    row-gap: 10px;
+    width: auto;
+    margin-top: 20px;
+    padding: 0px;
+}
+form{
+    margin-top: 20px;
+}
+body{
+    padding: 30px;
+}
+p{
+    margin: 0px;
+}
+#container li{
+    list-style: none;
+    padding-right: 20px;
+}
+
+.title{
+    border-bottom: 1px solid black;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+#textedit{
+    width: 500px;
+}
